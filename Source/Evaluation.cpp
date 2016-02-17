@@ -15,30 +15,32 @@ double findMinEdgeEpsilon(Edge *&minEdge, const std::vector<Edge *> &edges)
 	STD_VECTOR_CONST_FOREACH_(Edge *, edges, edgeIt, edgeEnd) {
 		Edge *edge(*edgeIt);
 
-		double weightPadding(edge->weight);
-		int incrementableFlowerCount(0);
+		if (!edge->isFull()) {
+			double weightPadding(edge->weight);
+			int incrementableFlowerCount(0);
 
-		STD_VECTOR_CONST_FOREACH_(Flower *, edge->flowers, flowerIt, flowerEnd) {
-			const Flower *flower(*flowerIt);
+			STD_VECTOR_CONST_FOREACH_(Flower *, edge->flowers, flowerIt, flowerEnd) {
+				const Flower *flower(*flowerIt);
 
-			weightPadding -= flower->power;
+				weightPadding -= flower->power;
 
-			switch (flower->type) {
-			case Flower::Type::TREE_EVEN:
-				++incrementableFlowerCount;
-				break;
-			case Flower::Type::TREE_ODD:
-				--incrementableFlowerCount;
-				break;
+				switch (flower->type) {
+				case Flower::Type::TREE_EVEN:
+					++incrementableFlowerCount;
+					break;
+				case Flower::Type::TREE_ODD:
+					--incrementableFlowerCount;
+					break;
+				}
 			}
-		}
 
-		// Test if edge is full and if the epsilon value has an upper bound.
-		if ((weightPadding > 0.0) && (incrementableFlowerCount > 0)) {
-			double maxEpsilon(weightPadding / static_cast<double>(incrementableFlowerCount));
-			if (minEpsilon > maxEpsilon) {
-				minEpsilon = maxEpsilon;
-				minEdge = edge;
+			// Test if edge is full and if the epsilon value has an upper bound.
+			if ((weightPadding > 0.0) && (incrementableFlowerCount > 0)) {
+				double maxEpsilon(weightPadding / static_cast<double>(incrementableFlowerCount));
+				if (minEpsilon > maxEpsilon) {
+					minEpsilon = maxEpsilon;
+					minEdge = edge;
+				}
 			}
 		}
 	}
@@ -55,8 +57,8 @@ double findMinGreenFlowerEpsilon(Flower *&minGreenFlower, const std::vector<Flow
 	STD_VECTOR_CONST_FOREACH_(Flower *, flowers, flowerIt, flowerEnd) {
 		Flower *flower(*flowerIt);
 
-		// Only free green flowers are affected.
-		if (flower->isFree() && flower->isGreen()) {
+		// Only tree odd green flowers are affected.
+		if ((flower->type == Flower::Type::TREE_ODD) && flower->isGreen()) {
 			if (minEpsilon > flower->power) {
 				minEpsilon = flower->power;
 				minGreenFlower = flower;
@@ -74,7 +76,7 @@ void applyEpsilon(const double epsilon, const std::vector<Flower *> &flowers)
 	STD_VECTOR_CONST_FOREACH_(Flower *, flowers, flowerIt, flowerEnd) {
 		Flower *flower(*flowerIt);
 
-		// Only free flowers are affected.
+		// Only tree flowers are affected.
 		switch (flower->type) {
 		case Flower::Type::TREE_EVEN:
 			flower->power += epsilon;

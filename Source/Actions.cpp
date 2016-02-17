@@ -114,11 +114,16 @@ Flower *executeCreateFlower(Edge *minEdge, std::vector<Flower *> &freeFlowers)
 
 	// Populate subflowers of Z flower in the following order W, K_p, ..., K_1, K, H, H_1, ..., H_q.
 	zFlower->subFlowers.push_back(wFlower);
+	wFlower->type = Flower::Type::INTERNAL;
 	for (std::vector<Flower*>::reverse_iterator kREnd(kPathToRoot.rend()); kRIt != kREnd; ++kRIt) {
-		zFlower->subFlowers.push_back(*kRIt);
+		Flower *subFlower(*kRIt);
+		zFlower->subFlowers.push_back(subFlower);
+		subFlower->type = Flower::Type::INTERNAL;
 	}
 	for (std::vector<Flower*>::iterator hIt(hPathToRoot.begin()); *hIt != wFlower; ++hIt) {
-		zFlower->subFlowers.push_back(*kRIt);
+		Flower *subFlower(*hIt);
+		zFlower->subFlowers.push_back(subFlower);
+		subFlower->type = Flower::Type::INTERNAL;
 	}
 
 	// Populate children and edges of Z flower.
