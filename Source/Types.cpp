@@ -6,15 +6,16 @@
 #include <iostream>
 
 Flower::Flower()
-: type(Type::TREE_EVEN)
+: type(Type::EVEN_IN_TREE)
 , power(0.0)
 , parent(nullptr)
-, stem(nullptr)
+, stemSubFlower(nullptr)
+, vertexId(0)
 {}
 
-bool Flower::isDumbell() const
+bool Flower::isInDumbbell() const
 {
-	return this->type == Type::DUMBELL;
+	return this->type == Type::IN_DUMBBELL;
 }
 
 bool Flower::isFree() const
@@ -24,45 +25,38 @@ bool Flower::isFree() const
 
 bool Flower::isGreen() const
 {
-	return this->stem != nullptr;
+	return this->stemSubFlower != nullptr;
 }
 
-const Flower *Flower::root() const
+Flower *Flower::root()
 {
-	const Flower *currentFlower(this);
+	Flower *currentFlower(this);
 	while (currentFlower->parent != nullptr) {
 		currentFlower = currentFlower->parent;
 	}
 	return currentFlower;
 }
 
-Edge *Flower::fullEdge(const Flower* flower) const
+Edge *Flower::inPairingEdge()
 {
-	STD_VECTOR_CONST_FOREACH_(Edge *, this->edges, edgeIt, edgeEnd) {
+	STD_VECTOR_FOREACH_(Edge *, this->edges, edgeIt, edgeEnd) {
 		Edge *edge(*edgeIt);
-		if (edge->isFull()) {
-			std::vector<Flower *> &edgeFlowers(edge->flowers);
-			if (std::find(edgeFlowers.begin(), edgeFlowers.end(), flower) != edgeFlowers.end()) {
-				return edge;
-			}
+		if (edge->type == Edge::Type::FULL_IN_PAIRING) {
+			return edge;
 		}
 	}
+#ifdef ENABLE_DEBUG
+	// ASSERTION: This method should not be called in a case where the desired edge does not exist.
+	std::cout << "Assertion failed: inPairingEdge method called when no such edge exists." << std::endl;
+	std::exit(-1);
+#endif
+	return nullptr;
 }
 
-Edge *Flower::mEdge() const
-{
-	STD_VECTOR_CONST_FOREACH_(Edge *, this->edges, edgeIt, edgeEnd) {
-		if ((*edgeIt)->type == Edge::Type::M_FULL) {
-			return *edgeIt;
-		}
-	}
-}
-
-std::vector<Flower *> Flower::blueSubFlowers() const
+std::vector<Flower *> Flower::blueSubFlowers()
 {
 	std::vector<Flower *> result;
-
-	STD_VECTOR_CONST_FOREACH_(Flower *, this->subFlowers, flowerIt, flowerEnd) {
+	STD_VECTOR_FOREACH_(Flower *, this->subFlowers, flowerIt, flowerEnd) {
 		Flower *flower(*flowerIt);
 		if (flower->isGreen()) {
 			std::vector<Flower *> subResult(flower->blueSubFlowers());
@@ -71,15 +65,14 @@ std::vector<Flower *> Flower::blueSubFlowers() const
 			result.push_back(flower);
 		}
 	}
-
 	return result;
 }
 
-const Flower *Flower::blueStem() const
+Flower *Flower::blueStem()
 {
-	const Flower *currentStem(this);
-	while (currentStem->stem != nullptr) {
-		currentStem = currentStem->stem;
+	Flower *currentStem(this);
+	while (currentStem->stemSubFlower != nullptr) {
+		currentStem = currentStem->stemSubFlower;
 	}
 	return currentStem;
 }
@@ -94,18 +87,18 @@ Edge::Edge()
 , weight(0.0)
 {}
 
-std::vector<Flower *> Edge::freeFlowers() const
+std::vector<Flower *> Edge::freeFlowers()
 {
 	std::vector<Flower *> result;
 
-	STD_VECTOR_CONST_FOREACH_(Flower *, this->flowers, flowerIt, flowerEnd) {
+	STD_VECTOR_FOREACH_(Flower *, this->flowers, flowerIt, flowerEnd) {
 		Flower *flower(*flowerIt);
 		if (flower->isFree()) {
 			result.push_back(flower);
 		}
 	}
 
-#ifdef ENABLE_ASSERTION
+#ifdef ENABLE_DEBUG
 	// ASSERTION: Each edge always connects the correct number of edges.
 	if (result.size() != VERTEX_PER_EDGE_COUNT) {
 		std::cout << "Assertion failed: An edge was found connecting " << result.size()

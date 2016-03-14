@@ -1,18 +1,21 @@
-#ifndef TYPES_H
-#define TYPES_H
+#ifndef EDMONDS_ALGORITHM_TYPES_H
+#define EDMONDS_ALGORITHM_TYPES_H
 
 #include "Utility.h"
 
 #include <vector>
+
+class Edge;
+class Flower;
 
 class Flower
 {
 public:
 	enum class Type : char
 	{
-		TREE_EVEN,
-		TREE_ODD,
-		DUMBELL,
+		EVEN_IN_TREE,
+		ODD_IN_TREE,
+		IN_DUMBBELL,
 		INTERNAL
 	};
 
@@ -20,26 +23,26 @@ public:
 	double power;
 
 	std::vector<Flower *> subFlowers;
-	Flower *stem;
+	Flower *stemSubFlower;
 
 	Flower *parent;
 	std::vector<Flower *> children;
 
 	std::vector<Edge *> edges;
 
+	int vertexId;
+
 	Flower();
 
-	bool isDumbell() const;
+	bool isInDumbbell() const;
 	bool isFree() const;
 	bool isGreen() const;
 
-	const Flower *root() const;
+	Flower *root();
+	Edge *inPairingEdge();
 
-	Edge *fullEdge(const Flower* flower) const;
-	Edge *mEdge() const;
-
-	std::vector<Flower *> blueSubFlowers() const;
-	const Flower *blueStem() const;
+	std::vector<Flower *> blueSubFlowers();
+	Flower *blueStem();
 };
 
 class Edge
@@ -48,8 +51,8 @@ public:
 	enum class Type : char
 	{
 		REGULAR,
-		M_FULL,
-		L_FULL
+		FULL_IN_PAIRING,
+		FULL_BLOCKING
 	};
 
 	Edge();
@@ -60,11 +63,9 @@ public:
 	std::vector<Flower *> flowers;
 	std::vector<Flower *> blueFlowers;
 
-	std::vector<int> vertexIds;
-
 	bool isFull() const;
 
-	std::vector<Flower *> freeFlowers() const;
+	std::vector<Flower *> freeFlowers();
 };
 
-#endif // TYPES_H
+#endif // EDMONDS_ALGORITHM_TYPES_H

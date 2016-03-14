@@ -1,5 +1,5 @@
-#ifndef EVALUATION_H
-#define EVALUATION_H
+#ifndef EDMONDS_ALGORITHM_EVALUATION_H
+#define EDMONDS_ALGORITHM_EVALUATION_H
 
 #include "Types.h"
 
@@ -12,6 +12,6 @@ double findMinEdgeEpsilon(Edge *&minEdge, const std::vector<Edge *> &edges);
 double findMinGreenFlowerEpsilon(Flower *&minGreenFlower, const std::vector<Flower *> &flowers);
 
 // Apply power changes to flowers using the selected epsilon value.
-void applyEpsilon(const double epsilon, const std::vector<Flower *> &flowers);
+void applyEpsilon(double epsilon, const std::vector<Flower *> &flowers);
 
-#endif // EVALUATION_H
+#endif // EDMONDS_ALGORITHM_EVALUATION_H

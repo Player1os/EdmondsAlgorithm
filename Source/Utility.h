@@ -1,13 +1,17 @@
-#ifndef UTILITY_H
-#define UTILITY_H
+#ifndef EDMONDS_ALGORITHM_UTILITY_H
+#define EDMONDS_ALGORITHM_UTILITY_H
 
-#define ENABLE_ASSERTION
+#ifdef _DEBUG
+#define ENABLE_DEBUG
+#endif
 
 #define VERTEX_PER_EDGE_COUNT 2
+
+#define FOREVER for(;;)
 
 #define STD_VECTOR_FOREACH_(t,v,it,endIt) \
 	for (std::vector<t>::iterator it(v.begin()), endIt(v.end()); it != endIt; ++it)
 #define STD_VECTOR_CONST_FOREACH_(t,v,it,endIt) \
-	for (std::vector<t>::const_iterator it(v.begin()), endIt(v.end()); it != endIt; ++it)
+	for (std::vector<t>::const_iterator it(v.cbegin()), endIt(v.cend()); it != endIt; ++it)
 
-#endif // UTILITY_H
+#endif // EDMONDS_ALGORITHM_UTILITY_H

@@ -19,13 +19,14 @@
 // TODO: needs to include cases for odd number of vectors.
 // TODO: needs to account for the fact that it is not always possible.
 
-bool testAllIsDumbell(const std::vector<Flower *> &flowers)
+bool testOneIsDumbbell(const std::vector<Flower *> &flowers)
 {
-	bool result(flowers[0]->isDumbell());
-	for (int i(1); i < VERTEX_PER_EDGE_COUNT; ++i) {
-		result = result && flowers[i]->isDumbell();
+	for (int i(0); i < VERTEX_PER_EDGE_COUNT; ++i) {
+		if (flowers[i]->isInDumbbell()) {
+			return true;
+		}
 	}
-	return result;
+	return false;
 }
 
 bool testAllRootEquality(const std::vector<Flower *> &flowers)
@@ -49,8 +50,10 @@ int main(const int argc, const char *argv[])
 	
 	// Initialize Blue Flowers.
 	std::vector<Flower *> flowers(vertexCount);
-	STD_VECTOR_FOREACH_(Flower *, flowers, flowerIt, flowerEnd) {
-		*flowerIt = new Flower();
+	for (int i(0); i < vertexCount; ++i) {
+		Flower *&flower(flowers[i]);
+		flower = new Flower();
+		flower->vertexId = i + 1;
 	}
 
 	// Initialize Edges.
@@ -59,24 +62,22 @@ int main(const int argc, const char *argv[])
 		*edgeIt = new Edge();
 		Edge *edge(*edgeIt);		
 
-		for (int i = 0; i < VERTEX_PER_EDGE_COUNT; ++i) {
-			int vertexId(-1);
+		for (int i(0); i < VERTEX_PER_EDGE_COUNT; ++i) {
+			int vertexId(0);
 			std::cin >> vertexId;
 
-			Flower *blueFlower(flowers[vertexId]);
+			Flower *blueFlower(flowers[vertexId - 1]);
 			blueFlower->edges.push_back(edge);
 			edge->flowers.push_back(blueFlower);
 			edge->blueFlowers.push_back(blueFlower);
-
-			edge->vertexIds.push_back(vertexId);
 		}
 		
 		std::cin >> edge->weight;
 	}
 
 	// Core algorithm loop.
-	int mEdgeCount(0);
-	while (mEdgeCount < (vertexCount / VERTEX_PER_EDGE_COUNT)) {
+	int pairingEdgeCount(0);
+	while (pairingEdgeCount < (vertexCount / VERTEX_PER_EDGE_COUNT)) {
 		// Find the min epsilon.
 		Edge *minEdge(nullptr);
 		double minEdgeEpsilon(findMinEdgeEpsilon(minEdge, edges));
@@ -99,47 +100,92 @@ int main(const int argc, const char *argv[])
 		} else {
 			std::vector<Flower *> freeFlowers(minEdge->freeFlowers());
 
-			if (testAllIsDumbell(freeFlowers)) {
-				executeAppendDumbell(minEdge, freeFlowers);
+			if (testOneIsDumbbell(freeFlowers)) {
+				executeAppendDumbbell(minEdge, freeFlowers);
 			} else if (testAllRootEquality(freeFlowers)) {
 				flowers.push_back(executeCreateFlower(minEdge, freeFlowers));
 			} else {
 				executeCollapseTree(minEdge, freeFlowers);
-				++mEdgeCount;
+				++pairingEdgeCount;
 			}			
-		}		
+		}
+
+#ifdef ENABLE_DEBUG
+		STD_VECTOR_CONST_FOREACH_(Flower *, flowers, flowerIt, flowerEnd) {
+			Flower *flower(*flowerIt);
+			if (flower->isGreen()) {
+				std::cout << "G" << flower->blueStem()->vertexId << "|";
+				std::vector<Flower *> blueSubFlowers(flower->blueSubFlowers());
+				STD_VECTOR_CONST_FOREACH_(Flower *, blueSubFlowers, subFlowerIt, subFlowerEnd) {
+					std::cout << (*subFlowerIt)->vertexId << "|";
+				}
+			} else {
+				std::cout << "B" << flower->vertexId << "|";
+				STD_VECTOR_CONST_FOREACH_(Edge *, flower->edges, edgeIt, edgeEnd) {
+					const Edge *edge(*edgeIt);
+					if (edge->isFull()) {
+						for (int i(0); i < VERTEX_PER_EDGE_COUNT; ++i) {
+							if (edge->blueFlowers[i] != flower) {
+								switch (edge->type)
+								{
+								case Edge::Type::FULL_IN_PAIRING:
+									std::cout << "M";
+									break;
+								case Edge::Type::FULL_BLOCKING:
+									std::cout << "L";
+									break;
+								}
+								std::cout << edge->blueFlowers[i]->vertexId << "|";
+								break;
+							}
+						}
+					}					
+				}
+			}
+			std::cout << std::endl;
+		}
+		std::cout << " --- " << std::endl;
+#endif
+	}
+
+	// Output Result.
+#ifdef ENABLE_DEBUG
+	if (pairingEdgeCount < (vertexCount / VERTEX_PER_EDGE_COUNT)) {
+		std::cout << "Warning: A complete pairing was not found!" << std::endl;
+	}
+	std::cout << "The following edges belong to the pairing:" << std::endl;
+#endif
+
+	double weightSum(0.0);
+	std::reverse(edges.begin(), edges.end());
+	STD_VECTOR_FOREACH_(Edge *, edges, edgeIt, edgeEnd) {
+		Edge *edge(*edgeIt);
+		if (edge->type == Edge::Type::FULL_IN_PAIRING) {
+			weightSum += edge->weight;
+		}
+	}
+	std::cout << weightSum << std::endl;
+
+	STD_VECTOR_FOREACH_(Edge *, edges, edgeIt, edgeEnd) {
+		Edge *edge(*edgeIt);
+		if (edge->type == Edge::Type::FULL_IN_PAIRING) {
+			std::cout << edge->blueFlowers[0]->vertexId;
+			for (int i(1); i < VERTEX_PER_EDGE_COUNT; ++i) {
+				std::cout << " " << edge->blueFlowers[i]->vertexId;
+			}
+			std::cout << std::endl;
+		}
 	}
 
 	// Deinitialize all Flowers.
-	STD_VECTOR_CONST_FOREACH_(Flower *, flowers, flowerIt, flowerEnd) {
+	STD_VECTOR_FOREACH_(Flower *, flowers, flowerIt, flowerEnd) {
 		delete *flowerIt;
 	}
 
 	// Deinitialize Edges.
-	STD_VECTOR_CONST_FOREACH_(Edge *, edges, edgeIt, edgeEnd) {
+	STD_VECTOR_FOREACH_(Edge *, edges, edgeIt, edgeEnd) {
 		delete *edgeIt;
 	}
-
-	// Output Result.
-	if (mEdgeCount < (vertexCount / VERTEX_PER_EDGE_COUNT)) {
-		std::cout << "Warning: A complete pairing was not found!" << std::endl;
-	}
-	std::cout << "The following edges belong to the pairing:" << std::endl;
-
-	double weightSum(0.0);	
-	STD_VECTOR_CONST_FOREACH_(Edge *, edges, edgeIt, edgeEnd) {
-		Edge *edge(*edgeIt);
-
-		if (edge->type == Edge::Type::M_FULL) {
-			weightSum += edge->weight;
-			std::cout << " " << edge->vertexIds[0];
-			for (int i(1); i < VERTEX_PER_EDGE_COUNT; ++i) {
-				std::cout << " - " << edge->vertexIds[i];
-			}
-			std::cout << std::endl;
-		}		
-	}
-	std::cout << "Their total weight sum is: " << weightSum << std::endl;
 
 	return 0;
 }

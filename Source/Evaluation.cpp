@@ -25,18 +25,19 @@ double findMinEdgeEpsilon(Edge *&minEdge, const std::vector<Edge *> &edges)
 				weightPadding -= flower->power;
 
 				switch (flower->type) {
-				case Flower::Type::TREE_EVEN:
+				case Flower::Type::EVEN_IN_TREE:
 					++incrementableFlowerCount;
 					break;
-				case Flower::Type::TREE_ODD:
+				case Flower::Type::ODD_IN_TREE:
 					--incrementableFlowerCount;
 					break;
 				}
 			}
 
 			// Test if edge is full and if the epsilon value has an upper bound.
-			if ((weightPadding > 0.0) && (incrementableFlowerCount > 0)) {
-				double maxEpsilon(weightPadding / static_cast<double>(incrementableFlowerCount));
+			double maxEpsilon(weightPadding);
+			if (incrementableFlowerCount > 0) {
+				maxEpsilon /= static_cast<double>(incrementableFlowerCount);
 				if (minEpsilon > maxEpsilon) {
 					minEpsilon = maxEpsilon;
 					minEdge = edge;
@@ -58,7 +59,7 @@ double findMinGreenFlowerEpsilon(Flower *&minGreenFlower, const std::vector<Flow
 		Flower *flower(*flowerIt);
 
 		// Only tree odd green flowers are affected.
-		if ((flower->type == Flower::Type::TREE_ODD) && flower->isGreen()) {
+		if ((flower->type == Flower::Type::ODD_IN_TREE) && flower->isGreen()) {
 			if (minEpsilon > flower->power) {
 				minEpsilon = flower->power;
 				minGreenFlower = flower;
@@ -69,7 +70,7 @@ double findMinGreenFlowerEpsilon(Flower *&minGreenFlower, const std::vector<Flow
 	return minEpsilon;
 }
 
-void applyEpsilon(const double epsilon, const std::vector<Flower *> &flowers)
+void applyEpsilon(double epsilon, const std::vector<Flower *> &flowers)
 {
 	// INVARIANT: Only the power of tree flowers changes here.
 
@@ -78,10 +79,10 @@ void applyEpsilon(const double epsilon, const std::vector<Flower *> &flowers)
 
 		// Only tree flowers are affected.
 		switch (flower->type) {
-		case Flower::Type::TREE_EVEN:
+		case Flower::Type::EVEN_IN_TREE:
 			flower->power += epsilon;
 			break;
-		case Flower::Type::TREE_ODD:
+		case Flower::Type::ODD_IN_TREE:
 			flower->power -= epsilon;
 			break;
 		}
