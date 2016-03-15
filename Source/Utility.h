@@ -3,6 +3,8 @@
 
 #ifdef _DEBUG
 #define ENABLE_DEBUG
+//#define ENABLE_DEBUG_
+#define ENABLE_DEBUG__
 #endif
 
 #define VERTEX_PER_EDGE_COUNT 2

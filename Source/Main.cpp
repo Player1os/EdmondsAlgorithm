@@ -94,23 +94,46 @@ int main(const int argc, const char *argv[])
 
 		// Choose action to be executed.
 		if (minEdgeEpsilon > minGreenFlowerEpsilon) {
+#ifdef ENABLE_DEBUG_
+			std::cout << "e=" << minGreenFlowerEpsilon << "|"
+				<< "G" << minGreenFlower->blueStem()->vertexId << "|";
+			std::vector<Flower *> blueSubFlowers(minGreenFlower->blueSubFlowers());
+			STD_VECTOR_CONST_FOREACH_(Flower *, blueSubFlowers, subFlowerIt, subFlowerEnd) {
+				std::cout << (*subFlowerIt)->vertexId << "|";
+			}
+			std::cout << "P1";
+#endif
 			executeBurstFlower(minGreenFlower);
 			flowers.erase(std::remove(flowers.begin(), flowers.end(), minGreenFlower), flowers.end());
 			delete minGreenFlower;
 		} else {
 			std::vector<Flower *> freeFlowers(minEdge->freeFlowers());
-
+#ifdef ENABLE_DEBUG_
+			std::cout << "e=" << minEdgeEpsilon << "|"
+				<< minEdge->blueFlowers.front()->vertexId << "-"
+				<< minEdge->blueFlowers.back()->vertexId << "|";
+#endif
 			if (testOneIsDumbbell(freeFlowers)) {
+#ifdef ENABLE_DEBUG_
+				std::cout << "P2";
+#endif
 				executeAppendDumbbell(minEdge, freeFlowers);
 			} else if (testAllRootEquality(freeFlowers)) {
+#ifdef ENABLE_DEBUG_
+				std::cout << "P3";
+#endif
 				flowers.push_back(executeCreateFlower(minEdge, freeFlowers));
 			} else {
+#ifdef ENABLE_DEBUG_
+				std::cout << "P4";
+#endif
 				executeCollapseTree(minEdge, freeFlowers);
 				++pairingEdgeCount;
 			}			
 		}
+		std::cout << std::endl;
 
-#ifdef ENABLE_DEBUG
+#ifdef ENABLE_DEBUG__
 		STD_VECTOR_CONST_FOREACH_(Flower *, flowers, flowerIt, flowerEnd) {
 			Flower *flower(*flowerIt);
 			if (flower->isGreen()) {

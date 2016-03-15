@@ -47,6 +47,170 @@ void reorderFlowers(std::vector<Flower *> &flowers, int &startFlowerId, int &end
 	startFlowerId = 0;
 }
 
+std::vector<Flower *> v3() {
+	std::vector<Flower *> v;	
+	v.push_back(new Flower());
+	v.back()->vertexId = 1;
+	v.push_back(new Flower());
+	v.back()->vertexId = 2;
+	v.push_back(new Flower());
+	v.back()->vertexId = 3;
+	return v;
+}
+
+std::vector<Flower *> v5() {
+	std::vector<Flower *> v(v3());
+	v.push_back(new Flower());
+	v.back()->vertexId = 4;
+	v.push_back(new Flower());
+	v.back()->vertexId = 5;
+	return v;
+}
+
+bool eq(std::vector<Flower *> &a, std::vector<int> &b) {
+	if (a.size() != b.size()) {
+		return false;
+	}
+	for (std::vector<Flower *>::size_type i(0); i < a.size(); ++i) {
+		if (a[i]->vertexId != b[i]) {
+			return false;
+		}
+	}
+	return true;
+}
+
+void test() {
+	int s, e;
+
+	std::vector<Flower *> a1(v3());
+	std::vector<int> r1({ 1, 2, 3 });
+	s = 0; e = 0;
+	reorderFlowers(a1, s, e);
+	if (!(eq(a1, r1) && (s == 0) && (e == 0))) {
+		exit(-1);
+	}
+
+	std::vector<Flower *> a2(v3());
+	std::vector<int> r2({ 2, 3, 1 });
+	s = 1; e = 1;
+	reorderFlowers(a2, s, e);
+	if (!(eq(a2, r2) && (s == 0) && (e == 0))) {
+		exit(-1);
+	}
+
+	std::vector<Flower *> a3(v3());
+	std::vector<int> r3({ 3, 1, 2 });
+	s = 2; e = 2;
+	reorderFlowers(a3, s, e);
+	if (!(eq(a3, r3) && (s == 0) && (e == 0))) {
+		exit(-1);
+	}
+
+	std::vector<Flower *> a4(v3());
+	std::vector<int> r4({ 1, 3, 2 });
+	s = 0; e = 1;
+	reorderFlowers(a4, s, e);
+	if (!(eq(a4, r4) && (s == 0) && (e == 2))) {
+		exit(-1);
+	}
+
+	std::vector<Flower *> a5(v3());
+	std::vector<int> r5({ 2, 3, 1 });
+	s = 1; e = 0;
+	reorderFlowers(a5, s, e);
+	if (!(eq(a5, r5) && (s == 0) && (e == 2))) {
+		exit(-1);
+	}
+
+	std::vector<Flower *> a6(v3());
+	std::vector<int> r6({ 1, 2, 3 });
+	s = 0; e = 2;
+	reorderFlowers(a6, s, e);
+	if (!(eq(a6, r6) && (s == 0) && (e == 2))) {
+		exit(-1);
+	}
+
+	std::vector<Flower *> a7(v3());
+	std::vector<int> r7({ 3, 2, 1 });
+	s = 2; e = 0;
+	reorderFlowers(a7, s, e);
+	if (!(eq(a7, r7) && (s == 0) && (e == 2))) {
+		exit(-1);
+	}
+
+	std::vector<Flower *> a8(v5());
+	std::vector<int> r8({ 2, 1, 5, 4, 3 });
+	s = 1; e = 4;
+	reorderFlowers(a8, s, e);
+	if (!(eq(a8, r8) && (s == 0) && (e == 2))) {
+		exit(-1);
+	}
+
+	std::vector<Flower *> a9(v5());
+	std::vector<int> r9({ 5, 1, 2, 3, 4 });
+	s = 4; e = 1;
+	reorderFlowers(a9, s, e);
+	if (!(eq(a9, r9) && (s == 0) && (e == 2))) {
+		exit(-1);
+	}
+
+	std::vector<Flower *> a10(v5());
+	std::vector<int> r10({ 5, 4, 3, 2, 1 });
+	s = 4; e = 0;
+	reorderFlowers(a10, s, e);
+	if (!(eq(a10, r10) && (s == 0) && (e == 4))) {
+		exit(-1);
+	}
+
+	std::vector<Flower *> a11(v5());
+	std::vector<int> r11({ 3, 4, 5, 1, 2 });
+	s = 2; e = 2;
+	reorderFlowers(a11, s, e);
+	if (!(eq(a11, r11) && (s == 0) && (e == 0))) {
+		exit(-1);
+	}
+
+	std::vector<Flower *> a12(v5());
+	std::vector<int> r12({ 1, 2, 3, 4, 5 });
+	s = 0; e = 4;
+	reorderFlowers(a12, s, e);
+	if (!(eq(a12, r12) && (s == 0) && (e == 4))) {
+		exit(-1);
+	}
+
+	std::vector<Flower *> a13(v5());
+	std::vector<int> r13({ 5, 4, 3, 2, 1 });
+	s = 4; e = 0;
+	reorderFlowers(a13, s, e);
+	if (!(eq(a13, r13) && (s == 0) && (e == 4))) {
+		exit(-1);
+	}
+
+	std::vector<Flower *> a14(v5());
+	std::vector<int> r14({ 5, 4, 3, 2, 1 });
+	s = 4; e = 2;
+	reorderFlowers(a14, s, e);
+	if (!(eq(a14, r14) && (s == 0) && (e == 2))) {
+		exit(-1);
+	}
+
+	std::vector<Flower *> a15(v5());
+	std::vector<int> r15({ 2, 3, 4, 5, 1 });;
+	s = 1; e = 3;
+	reorderFlowers(a15, s, e);
+	if (!(eq(a15, r15) && (s == 0) && (e == 2))) {
+		exit(-1);
+	}
+
+	std::vector<Flower *> a16(v5());
+	std::vector<int> r16({ 2, 3, 4, 5, 1 });;
+	s = 1; e = 0;
+	reorderFlowers(a16, s, e);
+	if (!(eq(a16, r16) && (s == 0) && (e == 4))) {
+		exit(-1);
+	}
+}
+
 void setBlockingEdgeToRegular(Flower *flowerA, Flower *flowerB)
 {
 	STD_VECTOR_FOREACH_(Edge *, flowerA->edges, edgeIt, edgeEnd) {
@@ -65,26 +229,24 @@ void executeBurstFlower(Flower *greenFlower)
 	Flower *upperSubFlower(nullptr);
 	{
 		// Find the edge that connects to the parent.
-		Edge *greenFlowerParentEdge(nullptr);
+		Edge *parentEdge(nullptr);
 		STD_VECTOR_FOREACH_(Edge *, greenFlower->parent->edges, edgeIt, edgeEnd) {
 			Edge *edge(*edgeIt);
 
 			if (edge->type == Edge::Type::FULL_BLOCKING) {
 				const std::vector<Flower *> &edgeFlowers(edge->flowers);
 				if (std::find(edgeFlowers.begin(), edgeFlowers.end(), greenFlower) != edgeFlowers.end()) {
-					greenFlowerParentEdge = edge;
+					parentEdge = edge;
 					break;
 				}
 			}
 		}
-		const std::vector<Flower *> &greenFlowerParentEdgeFlowers(greenFlowerParentEdge->flowers);
+		const std::vector<Flower *> &parentEdgeFlowers(parentEdge->flowers);
 
 		// Find the subflower that connects to the edge that connects to the parent.
 		STD_VECTOR_FOREACH_(Flower *, greenFlower->subFlowers, flowerIt, flowerEnd) {
 			upperSubFlower = *flowerIt;
-			bool searchResult(std::find(greenFlowerParentEdgeFlowers.begin(),
-				greenFlowerParentEdgeFlowers.end(), upperSubFlower) != greenFlowerParentEdgeFlowers.end());
-			if (searchResult) {
+			if (std::find(parentEdgeFlowers.begin(), parentEdgeFlowers.end(), upperSubFlower) != parentEdgeFlowers.end()) {
 				break;
 			}
 		}
@@ -104,7 +266,8 @@ void executeBurstFlower(Flower *greenFlower)
 	for (int i(0); i < subFlowersCount; ++i) {
 		if (greenFlowerSubFlowers[i] == upperSubFlower) {
 			upperSubFlowerId = i;
-		} else if (greenFlowerSubFlowers[i] == lowerSubFlower) {
+		}
+		if (greenFlowerSubFlowers[i] == lowerSubFlower) {
 			lowerSubFlowerId = i;
 		}
 	}
@@ -172,8 +335,8 @@ void executeAppendDumbbell(Edge *minEdge, std::vector<Flower *> &freeFlowers)
 	minEdge->type = Edge::Type::FULL_BLOCKING;
 
 	// Determine the tree flower and the upper Dumbbell flower.
-	Flower* treeFlower(freeFlowers[0]);
-	Flower* upperDumbbellFlower(freeFlowers[1]);
+	Flower* treeFlower(freeFlowers.front());
+	Flower* upperDumbbellFlower(freeFlowers.back());
 	if (treeFlower->isInDumbbell()) {
 		std::swap(treeFlower, upperDumbbellFlower);
 	}
@@ -185,9 +348,9 @@ void executeAppendDumbbell(Edge *minEdge, std::vector<Flower *> &freeFlowers)
 
 	// Determine the lower Dumbbell flower.
 	std::vector<Flower *> dumbbellFreeFlowers(upperDumbbellFlower->inPairingEdge()->freeFlowers());
-	Flower *lowerDumbbellFlower(dumbbellFreeFlowers[0]);
+	Flower *lowerDumbbellFlower(dumbbellFreeFlowers.front());
 	if (lowerDumbbellFlower == upperDumbbellFlower) {
-		lowerDumbbellFlower = dumbbellFreeFlowers[1];
+		lowerDumbbellFlower = dumbbellFreeFlowers.back();
 	}
 
 	// Set parameters for the lower Dumbbell flower.
@@ -202,16 +365,14 @@ Flower *executeCreateFlower(Edge *minEdge, std::vector<Flower *> &freeFlowers)
 
 	// Determine K flower's path to root.
 	std::vector<Flower*> kPathToRoot;
-	kPathToRoot.push_back(freeFlowers[0]);
-	while (kPathToRoot.back()->parent != nullptr) {
-		kPathToRoot.push_back(kPathToRoot.back()->parent);
+	for (Flower *kFlower(freeFlowers.front()); kFlower != nullptr; kFlower = kFlower->parent) {
+		kPathToRoot.push_back(kFlower);
 	}
 
 	// Determine H flower's path to root.
 	std::vector<Flower*> hPathToRoot;
-	hPathToRoot.push_back(freeFlowers[1]);
-	while (hPathToRoot.back()->parent != nullptr) {
-		hPathToRoot.push_back(hPathToRoot.back()->parent);
+	for (Flower *hFlower(freeFlowers.back()); hFlower != nullptr; hFlower = hFlower->parent) {
+		hPathToRoot.push_back(hFlower);
 	}
 
 	// Find the W flower, which is the LCA of K flower and H flower.
@@ -239,7 +400,7 @@ Flower *executeCreateFlower(Edge *minEdge, std::vector<Flower *> &freeFlowers)
 
 	// Populate subflowers of Z flower in the following order W, K_p, ..., K_1, K, H, H_1, ..., H_q.
 	zFlower->subFlowers.push_back(wFlower);
-	for (std::vector<Flower*>::reverse_iterator kREnd(kPathToRoot.rend()); kRIt != kREnd; ++kRIt) {
+	for (; kRIt != kREnd; ++kRIt) {
 		zFlower->subFlowers.push_back(*kRIt);
 	}
 	for (std::vector<Flower*>::iterator hIt(hPathToRoot.begin()); *hIt != wFlower; ++hIt) {
@@ -251,6 +412,7 @@ Flower *executeCreateFlower(Edge *minEdge, std::vector<Flower *> &freeFlowers)
 	STD_VECTOR_FOREACH_(Flower *, zFlower->subFlowers, subFlowerIt, subFlowerEnd) {
 		Flower *subFlower(*subFlowerIt);
 		
+		// Add the children of subflowers into Z flower's children only if the child is not part of Z flower.
 		STD_VECTOR_FOREACH_(Flower *, subFlower->children, childFlowerIt, childFlowerEnd) {
 			Flower *childFlower(*childFlowerIt);
 			if (std::find(zBlueFlowers.begin(), zBlueFlowers.end(), childFlower->blueStem()) == zBlueFlowers.end()) {
@@ -258,12 +420,13 @@ Flower *executeCreateFlower(Edge *minEdge, std::vector<Flower *> &freeFlowers)
 			}
 		}
 		
+		// Add the edges of subflowers into Z flower's edges only if the edge is outgoing from Z flower.
 		STD_VECTOR_FOREACH_(Edge *, subFlower->edges, subEdgeIt, subEdgeEnd) {
 			Edge *subEdge(*subEdgeIt);			
 			
 			bool areBothEdgeBlueFlowersInZFlower(
-				std::find(zBlueFlowers.begin(), zBlueFlowers.end(), subEdge->blueFlowers[0]) != zBlueFlowers.end()
-				&& std::find(zBlueFlowers.begin(), zBlueFlowers.end(), subEdge->blueFlowers[1]) != zBlueFlowers.end());
+				std::find(zBlueFlowers.begin(), zBlueFlowers.end(), subEdge->blueFlowers.front()) != zBlueFlowers.end()
+				&& std::find(zBlueFlowers.begin(), zBlueFlowers.end(), subEdge->blueFlowers.back()) != zBlueFlowers.end());
 
 			if (!areBothEdgeBlueFlowersInZFlower) {
 				zFlower->edges.push_back(subEdge);
@@ -315,7 +478,8 @@ std::vector<Edge *> preprocessAlternatingPathEdges(Flower *flower, Edge *outgoin
 		for (int i(0); i < subFlowersCount; ++i) {
 			if (subFlowers[i] == flower->stemSubFlower) {
 				stemSubFlowerId = i;
-			} else if (subFlowers[i] == outgoingSubFlower) {
+			}
+			if (subFlowers[i] == outgoingSubFlower) {
 				outgoingSubFlowerId = i;
 			}
 		}
@@ -333,9 +497,11 @@ std::vector<Edge *> preprocessAlternatingPathEdges(Flower *flower, Edge *outgoin
 			Edge *outgoingSubEdge(nullptr);
 			STD_VECTOR_FOREACH_(Edge *, flowerA->edges, edgeIt, edgeEnd) {
 				Edge *edge(*edgeIt);
-				if (std::find(edge->flowers.begin(), edge->flowers.end(), flowerB) != edge->flowers.end()) {
-					outgoingSubEdge = edge;
-					break;
+				if (edge->type == Edge::Type::FULL_BLOCKING) {
+					if (std::find(edge->flowers.begin(), edge->flowers.end(), flowerB) != edge->flowers.end()) {
+						outgoingSubEdge = edge;
+						break;
+					}
 				}
 			}
 
@@ -414,7 +580,9 @@ void executeCollapseTree(Edge *minEdge, std::vector<Flower *> &freeFlowers)
 			// Find and swap the type of the outgoing edge of the odd flower.			
 			STD_VECTOR_FOREACH_(Edge *, freeFlower->parent->edges, edgeIt, edgeEnd) {
 				outgoingEdge = *edgeIt;
-				if (std::find(outgoingEdge->flowers.begin(), outgoingEdge->flowers.end(), freeFlower) != outgoingEdge->flowers.end()) {
+				bool isBlockingParentEdge((outgoingEdge->type == Edge::Type::FULL_BLOCKING)
+					&& (std::find(outgoingEdge->flowers.begin(), outgoingEdge->flowers.end(), freeFlower) != outgoingEdge->flowers.end()));
+				if (isBlockingParentEdge) {
 					outgoingEdge->type = Edge::Type::FULL_IN_PAIRING;
 					break;
 				}

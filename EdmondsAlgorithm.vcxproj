@@ -20,9 +20,9 @@
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="Source\Actions.cpp" />
-    <ClCompile Include="Source\Types.cpp" />
     <ClCompile Include="Source\Evaluation.cpp" />
     <ClCompile Include="Source\Main.cpp" />
+    <ClCompile Include="Source\Types.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="Source\Actions.h" />
