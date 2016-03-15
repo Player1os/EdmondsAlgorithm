@@ -47,170 +47,6 @@ void reorderFlowers(std::vector<Flower *> &flowers, int &startFlowerId, int &end
 	startFlowerId = 0;
 }
 
-std::vector<Flower *> v3() {
-	std::vector<Flower *> v;	
-	v.push_back(new Flower());
-	v.back()->vertexId = 1;
-	v.push_back(new Flower());
-	v.back()->vertexId = 2;
-	v.push_back(new Flower());
-	v.back()->vertexId = 3;
-	return v;
-}
-
-std::vector<Flower *> v5() {
-	std::vector<Flower *> v(v3());
-	v.push_back(new Flower());
-	v.back()->vertexId = 4;
-	v.push_back(new Flower());
-	v.back()->vertexId = 5;
-	return v;
-}
-
-bool eq(std::vector<Flower *> &a, std::vector<int> &b) {
-	if (a.size() != b.size()) {
-		return false;
-	}
-	for (std::vector<Flower *>::size_type i(0); i < a.size(); ++i) {
-		if (a[i]->vertexId != b[i]) {
-			return false;
-		}
-	}
-	return true;
-}
-
-void test() {
-	int s, e;
-
-	std::vector<Flower *> a1(v3());
-	std::vector<int> r1({ 1, 2, 3 });
-	s = 0; e = 0;
-	reorderFlowers(a1, s, e);
-	if (!(eq(a1, r1) && (s == 0) && (e == 0))) {
-		exit(-1);
-	}
-
-	std::vector<Flower *> a2(v3());
-	std::vector<int> r2({ 2, 3, 1 });
-	s = 1; e = 1;
-	reorderFlowers(a2, s, e);
-	if (!(eq(a2, r2) && (s == 0) && (e == 0))) {
-		exit(-1);
-	}
-
-	std::vector<Flower *> a3(v3());
-	std::vector<int> r3({ 3, 1, 2 });
-	s = 2; e = 2;
-	reorderFlowers(a3, s, e);
-	if (!(eq(a3, r3) && (s == 0) && (e == 0))) {
-		exit(-1);
-	}
-
-	std::vector<Flower *> a4(v3());
-	std::vector<int> r4({ 1, 3, 2 });
-	s = 0; e = 1;
-	reorderFlowers(a4, s, e);
-	if (!(eq(a4, r4) && (s == 0) && (e == 2))) {
-		exit(-1);
-	}
-
-	std::vector<Flower *> a5(v3());
-	std::vector<int> r5({ 2, 3, 1 });
-	s = 1; e = 0;
-	reorderFlowers(a5, s, e);
-	if (!(eq(a5, r5) && (s == 0) && (e == 2))) {
-		exit(-1);
-	}
-
-	std::vector<Flower *> a6(v3());
-	std::vector<int> r6({ 1, 2, 3 });
-	s = 0; e = 2;
-	reorderFlowers(a6, s, e);
-	if (!(eq(a6, r6) && (s == 0) && (e == 2))) {
-		exit(-1);
-	}
-
-	std::vector<Flower *> a7(v3());
-	std::vector<int> r7({ 3, 2, 1 });
-	s = 2; e = 0;
-	reorderFlowers(a7, s, e);
-	if (!(eq(a7, r7) && (s == 0) && (e == 2))) {
-		exit(-1);
-	}
-
-	std::vector<Flower *> a8(v5());
-	std::vector<int> r8({ 2, 1, 5, 4, 3 });
-	s = 1; e = 4;
-	reorderFlowers(a8, s, e);
-	if (!(eq(a8, r8) && (s == 0) && (e == 2))) {
-		exit(-1);
-	}
-
-	std::vector<Flower *> a9(v5());
-	std::vector<int> r9({ 5, 1, 2, 3, 4 });
-	s = 4; e = 1;
-	reorderFlowers(a9, s, e);
-	if (!(eq(a9, r9) && (s == 0) && (e == 2))) {
-		exit(-1);
-	}
-
-	std::vector<Flower *> a10(v5());
-	std::vector<int> r10({ 5, 4, 3, 2, 1 });
-	s = 4; e = 0;
-	reorderFlowers(a10, s, e);
-	if (!(eq(a10, r10) && (s == 0) && (e == 4))) {
-		exit(-1);
-	}
-
-	std::vector<Flower *> a11(v5());
-	std::vector<int> r11({ 3, 4, 5, 1, 2 });
-	s = 2; e = 2;
-	reorderFlowers(a11, s, e);
-	if (!(eq(a11, r11) && (s == 0) && (e == 0))) {
-		exit(-1);
-	}
-
-	std::vector<Flower *> a12(v5());
-	std::vector<int> r12({ 1, 2, 3, 4, 5 });
-	s = 0; e = 4;
-	reorderFlowers(a12, s, e);
-	if (!(eq(a12, r12) && (s == 0) && (e == 4))) {
-		exit(-1);
-	}
-
-	std::vector<Flower *> a13(v5());
-	std::vector<int> r13({ 5, 4, 3, 2, 1 });
-	s = 4; e = 0;
-	reorderFlowers(a13, s, e);
-	if (!(eq(a13, r13) && (s == 0) && (e == 4))) {
-		exit(-1);
-	}
-
-	std::vector<Flower *> a14(v5());
-	std::vector<int> r14({ 5, 4, 3, 2, 1 });
-	s = 4; e = 2;
-	reorderFlowers(a14, s, e);
-	if (!(eq(a14, r14) && (s == 0) && (e == 2))) {
-		exit(-1);
-	}
-
-	std::vector<Flower *> a15(v5());
-	std::vector<int> r15({ 2, 3, 4, 5, 1 });;
-	s = 1; e = 3;
-	reorderFlowers(a15, s, e);
-	if (!(eq(a15, r15) && (s == 0) && (e == 2))) {
-		exit(-1);
-	}
-
-	std::vector<Flower *> a16(v5());
-	std::vector<int> r16({ 2, 3, 4, 5, 1 });;
-	s = 1; e = 0;
-	reorderFlowers(a16, s, e);
-	if (!(eq(a16, r16) && (s == 0) && (e == 4))) {
-		exit(-1);
-	}
-}
-
 void setBlockingEdgeToRegular(Flower *flowerA, Flower *flowerB)
 {
 	STD_VECTOR_FOREACH_(Edge *, flowerA->edges, edgeIt, edgeEnd) {
@@ -320,8 +156,12 @@ void executeBurstFlower(Flower *greenFlower)
 	}
 
 	// Set blocking edges at the beginning and end of the tree segments as regular.
-	setBlockingEdgeToRegular(upperSubFlower, greenFlowerSubFlowers[subFlowersCount - 1]);
 	setBlockingEdgeToRegular(lowerSubFlower, greenFlowerSubFlowers[(lowerSubFlowerId + 1) % subFlowersCount]);
+	for (int i(lowerSubFlowerId + 1), count(subFlowersCount - 1); i < count; ++i) {
+		setBlockingEdgeToRegular(greenFlowerSubFlowers[i], greenFlowerSubFlowers[i + 1]);
+	}
+	setBlockingEdgeToRegular(upperSubFlower, greenFlowerSubFlowers[subFlowersCount - 1]);
+	
 
 	// Remove the green flower from all edges.
 	STD_VECTOR_FOREACH_(Edge *, greenFlower->edges, edgeIt, edgeEnd) {
@@ -533,8 +373,9 @@ std::vector<Edge *> preprocessAlternatingPathEdges(Flower *flower, Edge *outgoin
 
 void dismantleTree(Flower *flower)
 {
-	STD_VECTOR_FOREACH_(Flower *, flower->children, subFlowerIt, subFlowerEnd) {
-		dismantleTree(*subFlowerIt);
+	STD_VECTOR_FOREACH_(Flower *, flower->children, flowerIt, flowerEnd) {
+		setBlockingEdgeToRegular(flower, *flowerIt);
+		dismantleTree(*flowerIt);		
 	}
 
 	flower->type = Flower::Type::IN_DUMBBELL;

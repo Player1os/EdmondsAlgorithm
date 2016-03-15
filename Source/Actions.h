@@ -5,8 +5,6 @@
 
 #include <vector>
 
-void test();
-
 // Implementation of (P1).
 void executeBurstFlower(Flower *greenFlower);
 

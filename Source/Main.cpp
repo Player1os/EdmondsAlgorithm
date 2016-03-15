@@ -5,19 +5,8 @@
 
 #include <algorithm>
 #include <iostream>
+#include <iomanip>
 #include <vector>
-
-// SUGGSETIONS
-// There may be a problem with double weights, investigate if it becomes an issue.
-
-// A good idea would be to see if it is possible to get a valid epsilon.
-// If all vertices are blocked we may wish to stop the process.
-
-// So the result of the algorithm is a complete min-1-factor if |M|=n/2,
-// or a partial min-1-factor otherwise.
-
-// TODO: needs to include cases for odd number of vectors.
-// TODO: needs to account for the fact that it is not always possible.
 
 bool testOneIsDumbbell(const std::vector<Flower *> &flowers)
 {
@@ -42,6 +31,8 @@ bool testAllRootEquality(const std::vector<Flower *> &flowers)
 
 int main(const int argc, const char *argv[])
 {
+	std::cout << std::fixed << std::setprecision(2);
+
 	// Read input.
 	int vertexCount(0);
 	int edgeCount(0);
@@ -77,7 +68,7 @@ int main(const int argc, const char *argv[])
 
 	// Core algorithm loop.
 	int pairingEdgeCount(0);
-	while (pairingEdgeCount < (vertexCount / VERTEX_PER_EDGE_COUNT)) {
+	FOREVER {
 		// Find the min epsilon.
 		Edge *minEdge(nullptr);
 		double minEdgeEpsilon(findMinEdgeEpsilon(minEdge, edges));
@@ -94,46 +85,53 @@ int main(const int argc, const char *argv[])
 
 		// Choose action to be executed.
 		if (minEdgeEpsilon > minGreenFlowerEpsilon) {
-#ifdef ENABLE_DEBUG_
-			std::cout << "e=" << minGreenFlowerEpsilon << "|"
+			executeBurstFlower(minGreenFlower);
+			flowers.erase(std::remove(flowers.begin(), flowers.end(), minGreenFlower), flowers.end());
+			delete minGreenFlower;
+
+#ifdef ENABLE_DEBUG_CHOSEN_ACTION
+			std::cout << "P1|e=" << minGreenFlowerEpsilon << "|"
 				<< "G" << minGreenFlower->blueStem()->vertexId << "|";
 			std::vector<Flower *> blueSubFlowers(minGreenFlower->blueSubFlowers());
 			STD_VECTOR_CONST_FOREACH_(Flower *, blueSubFlowers, subFlowerIt, subFlowerEnd) {
 				std::cout << (*subFlowerIt)->vertexId << "|";
-			}
-			std::cout << "P1";
+			}			
 #endif
-			executeBurstFlower(minGreenFlower);
-			flowers.erase(std::remove(flowers.begin(), flowers.end(), minGreenFlower), flowers.end());
-			delete minGreenFlower;
 		} else {
 			std::vector<Flower *> freeFlowers(minEdge->freeFlowers());
-#ifdef ENABLE_DEBUG_
-			std::cout << "e=" << minEdgeEpsilon << "|"
-				<< minEdge->blueFlowers.front()->vertexId << "-"
-				<< minEdge->blueFlowers.back()->vertexId << "|";
-#endif
+
 			if (testOneIsDumbbell(freeFlowers)) {
-#ifdef ENABLE_DEBUG_
+				executeAppendDumbbell(minEdge, freeFlowers);
+
+#ifdef ENABLE_DEBUG_CHOSEN_ACTION
 				std::cout << "P2";
 #endif
-				executeAppendDumbbell(minEdge, freeFlowers);
 			} else if (testAllRootEquality(freeFlowers)) {
-#ifdef ENABLE_DEBUG_
+				flowers.push_back(executeCreateFlower(minEdge, freeFlowers));
+
+#ifdef ENABLE_DEBUG_CHOSEN_ACTION
 				std::cout << "P3";
 #endif
-				flowers.push_back(executeCreateFlower(minEdge, freeFlowers));
 			} else {
-#ifdef ENABLE_DEBUG_
-				std::cout << "P4";
-#endif
 				executeCollapseTree(minEdge, freeFlowers);
 				++pairingEdgeCount;
-			}			
-		}
-		std::cout << std::endl;
 
-#ifdef ENABLE_DEBUG__
+#ifdef ENABLE_DEBUG_CHOSEN_ACTION
+				std::cout << "P4";
+#endif
+			}
+
+#ifdef ENABLE_DEBUG_CHOSEN_ACTION
+			std::cout << "|e=" << minEdgeEpsilon << "|"
+				<< minEdge->blueFlowers.front()->vertexId << "-"
+				<< minEdge->blueFlowers.back()->vertexId;
+#endif
+		}
+#ifdef ENABLE_DEBUG_CHOSEN_ACTION
+		std::cout << std::endl;
+#endif
+
+#ifdef ENABLE_DEBUG_GRAPH_STATE
 		STD_VECTOR_CONST_FOREACH_(Flower *, flowers, flowerIt, flowerEnd) {
 			Flower *flower(*flowerIt);
 			if (flower->isGreen()) {
@@ -172,7 +170,8 @@ int main(const int argc, const char *argv[])
 	}
 
 	// Output Result.
-#ifdef ENABLE_DEBUG
+	std::cout << std::setprecision(0);
+#ifdef ENABLE_DEBUG_VERBOUS_OUTPUT
 	if (pairingEdgeCount < (vertexCount / VERTEX_PER_EDGE_COUNT)) {
 		std::cout << "Warning: A complete pairing was not found!" << std::endl;
 	}
